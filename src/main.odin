@@ -55,8 +55,7 @@ step :: proc() -> bool {
 	// Normalizing makes the movement not go faster when going diagonally.
 	player_pos += linalg.normalize0(movement) * k2.get_frame_time() * 400
 
-
-    k2.clear(k2.LIGHT_BLUE)
+    k2.clear(k2.BLACK)
     k2.draw_text("Hellope!", {50, 50}, 100, k2.DARK_BLUE)
 
 	k2.draw_circle(player_pos + PLAYER_OFFSET, PLAYER_RADIUS, k2.DARK_BLUE)
