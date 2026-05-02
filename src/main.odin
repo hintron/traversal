@@ -2,6 +2,7 @@ package traversal
 
 import k2 "odyn_deps/karl2d"
 import "core:fmt"
+import "core:math/linalg"
 
 // main() is for non-web builds. Web builds will call init(), step(), and
 // shutdown() directly, without calling main
@@ -35,6 +36,25 @@ step :: proc() -> bool {
     if !k2.update() {
         return false
     }
+
+    // Get user input
+	movement: k2.Vec2
+	if k2.key_is_held(.Left) {
+		movement.x -= 1
+	}
+	if k2.key_is_held(.Right) {
+		movement.x += 1
+	}
+	if k2.key_is_held(.Up) {
+		movement.y -= 1
+	}
+	if k2.key_is_held(.Down) {
+		movement.y += 1
+	}
+
+	// Normalizing makes the movement not go faster when going diagonally.
+	player_pos += linalg.normalize0(movement) * k2.get_frame_time() * 400
+
 
     k2.clear(k2.LIGHT_BLUE)
     k2.draw_text("Hellope!", {50, 50}, 100, k2.DARK_BLUE)
