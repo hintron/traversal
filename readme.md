@@ -29,7 +29,7 @@ make -C "<path_to_odin>/vendor/stb/src"
 
 ```
 cd src
-odin run odyn_deps/karl2d/build_web -- .
+odin run odyn_deps/karl2d/build_web -- . -o:size
 cd bin/web
 python -m http.server
 ```
