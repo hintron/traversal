@@ -20,7 +20,7 @@ player_pos: k2.Vec2
 
 init :: proc() {
     fmt.println("Hellope, traversal!")
-    k2.init(1280, 720, "Greetings from Karl2D!")
+    k2.init(1280, 720, "Greetings from Karl2D!", options = {window_mode = .Windowed_Resizable})
 
     PLAYER_OFFSET = {
         PLAYER_WIDTH / 2, PLAYER_HEIGHT / 2
