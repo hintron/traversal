@@ -24,3 +24,14 @@ When using a local Git-cloned Odin, I had to do
 ```
 make -C "<path_to_odin>/vendor/stb/src"
 ```
+
+## Web Build
+
+```
+cd src
+odin run odyn_deps/karl2d/build_web -- .
+cd bin/web
+python -m http.server
+```
+
+Then, open `http://localhost:8000/` in a browser.

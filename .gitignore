@@ -1,2 +1,4 @@
 # I don't actually want to vendor my dependencies, for now
 odyn_deps/
+src/bin
+src/build
