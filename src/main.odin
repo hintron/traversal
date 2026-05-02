@@ -20,7 +20,7 @@ player_pos: k2.Vec2
 
 init :: proc() {
     fmt.println("Hellope, traversal!")
-    k2.init(1280, 720, "Greetings from Karl2D!", options = {window_mode = .Windowed_Resizable})
+    k2.init(1280, 720, "Traversal", options = {window_mode = .Windowed_Resizable})
 
     PLAYER_OFFSET = {
         PLAYER_WIDTH / 2, PLAYER_HEIGHT / 2
@@ -29,8 +29,6 @@ init :: proc() {
         0, 0
     }
 }
-
-
 
 step :: proc() -> bool {
     if !k2.update() {
@@ -58,8 +56,14 @@ step :: proc() -> bool {
     k2.clear(k2.BLACK)
     k2.draw_text("Hellope!", {50, 50}, 100, k2.DARK_BLUE)
 
+    // Draw player
 	k2.draw_circle(player_pos + PLAYER_OFFSET, PLAYER_RADIUS, k2.DARK_BLUE)
 	k2.draw_circle(player_pos + PLAYER_OFFSET, PLAYER_RADIUS - 10.0, k2.BLUE)
+
+    // Draw obstacles
+	k2.draw_rect({10, 10, 60, 60}, k2.GREEN)
+	k2.draw_rect({20, 20, 40, 40}, k2.LIGHT_GREEN)
+
 
     k2.present()
 
