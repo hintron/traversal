@@ -106,6 +106,9 @@ step :: proc() -> bool {
 	fps_str := strings.builder_make(context.temp_allocator)
 	strings.write_string(&fps_str, "FPS: ")
 	strings.write_f32(&fps_str, fps, 'f')
+	strings.write_string(&fps_str, " (")
+	strings.write_f32(&fps_str, frame_draw_time * 1000, 'f')
+	strings.write_string(&fps_str, " ms)")
 
 	k2.clear(k2.BLACK)
 
