@@ -6,6 +6,7 @@ import "core:math/linalg"
 import "core:container/xar"
 import "core:container/queue"
 import "core:strings"
+import "core:mem"
 
 // main() is for non-web builds. Web builds will call init(), step(), and
 // shutdown() directly, without calling main
@@ -22,6 +23,11 @@ PLAYER_OFFSET: k2.Vec2
 player_pos: k2.Vec2
 player_cmd_queue: queue.Queue(PlayerCmd) // Default capacity is 16
 player_cmd_history: xar.Array(PlayerCmd, 10) // 2^10 or 1024 initial capacity
+
+when ODIN_DEBUG {
+	mem_tracker: mem.Tracking_Allocator
+	temp_mem_tracker: mem.Tracking_Allocator
+}
 
 PlayerCmd :: enum {
 	MoveLeft,
@@ -127,4 +133,13 @@ shutdown :: proc() {
 	xar.destroy(&player_cmd_history)
 	queue.destroy(&player_cmd_queue)
 	k2.shutdown()
+
+	when ODIN_DEBUG {
+		if len(mem_tracker.allocation_map) > 0 {
+			for _, entry in mem_tracker.allocation_map {
+				fmt.eprintf("%v leaked %v bytes\n", entry.location, entry.size)
+			}
+		}
+		mem.tracking_allocator_destroy(&mem_tracker)
+	}
 }
