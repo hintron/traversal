@@ -1,5 +1,7 @@
 # Traversal: [Karl2d Game Jam](https://itch.io/jam/karl2d-jam) Submission
 
+https://hintron.itch.io/karl2d-game-jam-submission-traversal
+
 UPDATE (2026-5-3): Don't vote for this!
 
 Unfortunately, due to family commitments, I did not have enough free time over the weekend to get a playable game. But I was able to get the foundation started for my first Karl2d project, and I got more familiar with Odin as one of my first Odin projects. I also made sure not to use AI (though AI doesn't really know about Odin anyways), which has been fun and refreshing.
