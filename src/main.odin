@@ -118,6 +118,34 @@ step :: proc() -> bool {
 	// Draw FPS
 	k2.draw_text(strings.to_string(fps_str), {50, 150}, 30, k2.DARK_BLUE)
 
+	// Draw command history
+	k2.draw_text("Command History:", {50, 200}, 20, k2.DARK_BLUE)
+	count := 0
+	draw_offset: f32 = 0.0
+	len := xar.len(player_cmd_history)
+	command_history_iter := xar.iterator(&player_cmd_history)
+	for cmd in xar.iterate_by_val(&command_history_iter) {
+		count += 1
+
+		// Show only the last 5 commands
+		if len > 5 && count <= len - 5 {
+			continue
+		}
+
+		strings.write_string(&fps_str, "* ")
+		switch cmd {
+			case .MoveLeft:
+				k2.draw_text("* MoveLeft", {50, 225 + draw_offset}, 20, k2.DARK_BLUE)
+			case .MoveRight:
+				k2.draw_text("* MoveRight", {50, 225 + draw_offset}, 20, k2.DARK_BLUE)
+			case .MoveUp:
+				k2.draw_text("* MoveUp", {50, 225 + draw_offset}, 20, k2.DARK_BLUE)
+			case .MoveDown:
+				k2.draw_text("* MoveDown", {50, 225 + draw_offset}, 20, k2.DARK_BLUE)
+		}
+		draw_offset += 25.0
+	}
+
 	// Draw player
 	k2.draw_circle(player_pos + PLAYER_OFFSET, PLAYER_RADIUS, k2.DARK_BLUE)
 	k2.draw_circle(player_pos + PLAYER_OFFSET, PLAYER_RADIUS - 10.0, k2.BLUE)

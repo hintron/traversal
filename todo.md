@@ -2,8 +2,6 @@
 
 ## On Deck
 
-* Show last 10 commands in command history.
-
 * Get player in center of screen.
 
 * Generate 3 random obstacles.
@@ -43,6 +41,8 @@
 
 
 ## Completed
+
+* Show last 5 commands in command history.
 
 * Show FPS using get_frame_time().
 
