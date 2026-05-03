@@ -5,6 +5,7 @@ import "core:fmt"
 import "core:math/linalg"
 import "core:container/xar"
 import "core:container/queue"
+import "core:strings"
 
 // main() is for non-web builds. Web builds will call init(), step(), and
 // shutdown() directly, without calling main
@@ -87,8 +88,19 @@ step :: proc() -> bool {
 	// // Normalizing makes the movement not go faster when going diagonally.
 	player_pos += linalg.normalize0(movement) * k2.get_frame_time() * 400
 
+    frame_draw_time := k2.get_frame_time()
+    fps := 1.0 / frame_draw_time
+    fps_str := strings.builder_make(context.temp_allocator)
+    strings.write_string(&fps_str, "FPS: ")
+    strings.write_f32(&fps_str, fps, 'f')
+
     k2.clear(k2.BLACK)
+
+    // Draw title
     k2.draw_text("Traverse", {50, 50}, 100, k2.DARK_BLUE)
+
+    // Draw FPS
+    k2.draw_text(strings.to_string(fps_str), {50, 150}, 30, k2.DARK_BLUE)
 
     // Draw player
 	k2.draw_circle(player_pos + PLAYER_OFFSET, PLAYER_RADIUS, k2.DARK_BLUE)
@@ -100,6 +112,7 @@ step :: proc() -> bool {
 
     k2.present()
 
+    free_all(context.temp_allocator)
     return true
 }
 

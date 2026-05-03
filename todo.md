@@ -2,8 +2,6 @@
 
 ## On Deck
 
-* Show FPS using get_frame_time().
-
 * Show last 10 commands in command history.
 
 * Get player in center of screen.
@@ -45,6 +43,8 @@
 
 
 ## Completed
+
+* Show FPS using get_frame_time().
 
 * Get left, right, and up keyboard input working.
 
