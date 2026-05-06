@@ -195,7 +195,7 @@ shutdown :: proc() {
 		context = context_global
 	}
 
-	fmt.println("Shutting down traversal")
+	fmt.println("Shutting down traversal", flush = true)
 
 	when MEM_LEAKS {
 		never_freed := make([]u8, 1024 * 1024) // 1 MB leak to test mem tracker
