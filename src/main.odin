@@ -25,7 +25,7 @@ PLAYER_OFFSET: k2.Vec2
 player_pos: k2.Vec2
 player_cmd_queue: queue.Queue(PlayerCmd) // Default capacity is 16
 player_cmd_history: xar.Array(PlayerCmd, 10) // 2^10 or 1024 initial capacity
-
+last_printed_second: i64
 // Add a command-line define to trigger mem leaks, to test the tracking allocator
 // -define:MEM_LEAKS=true
 MEM_LEAKS :: #config(MEM_LEAKS, false)
@@ -132,11 +132,20 @@ step :: proc() -> bool {
 	strings.write_f32(&fps_str, frame_draw_time * 1000, 'f')
 	strings.write_string(&fps_str, " ms)")
 	if SHUTDOWN_SECS > 0 {
-		seconds_remaining := SHUTDOWN_SECS - k2.get_time()
-		if seconds_remaining > 0 {
+		seconds_remaining := i64(SHUTDOWN_SECS - k2.get_time()) + 1
+		if seconds_remaining >= 0 {
 			strings.write_string(&fps_str, " - Shutting down in ")
-			strings.write_f64(&fps_str, SHUTDOWN_SECS - k2.get_time(), 'f')
-			strings.write_string(&fps_str, " seconds")
+			strings.write_i64(&fps_str, seconds_remaining)
+			strings.write_string(&fps_str, " second")
+			if seconds_remaining != 1 {
+				strings.write_string(&fps_str, "s")
+			}
+			if seconds_remaining != last_printed_second {
+				if last_printed_second != 0 {
+					fmt.println("Shutting down in ", seconds_remaining, " seconds")
+				}
+				last_printed_second = seconds_remaining
+			}
 		}
 	}
 
