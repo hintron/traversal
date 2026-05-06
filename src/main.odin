@@ -29,6 +29,7 @@ player_cmd_history: xar.Array(PlayerCmd, 10) // 2^10 or 1024 initial capacity
 // Add a command-line define to trigger mem leaks, to test the tracking allocator
 // -define:MEM_LEAKS=true
 MEM_LEAKS :: #config(MEM_LEAKS, false)
+SHUTDOWN_SECS : f64 : #config(SHUTDOWN_SECS, 0.0)
 
 when ODIN_DEBUG {
 	context_global : runtime.Context
@@ -72,6 +73,10 @@ init :: proc() {
 step :: proc() -> bool {
 	when ODIN_DEBUG { // Must be first!
 		context = context_global
+	}
+
+	if SHUTDOWN_SECS > 0 && k2.get_time() >= SHUTDOWN_SECS {
+		return false
 	}
 
 	if !k2.update() {
@@ -126,6 +131,14 @@ step :: proc() -> bool {
 	strings.write_string(&fps_str, " (")
 	strings.write_f32(&fps_str, frame_draw_time * 1000, 'f')
 	strings.write_string(&fps_str, " ms)")
+	if SHUTDOWN_SECS > 0 {
+		seconds_remaining := SHUTDOWN_SECS - k2.get_time()
+		if seconds_remaining > 0 {
+			strings.write_string(&fps_str, " - Shutting down in ")
+			strings.write_f64(&fps_str, SHUTDOWN_SECS - k2.get_time(), 'f')
+			strings.write_string(&fps_str, " seconds")
+		}
+	}
 
 	k2.clear(k2.BLACK)
 
@@ -181,6 +194,8 @@ shutdown :: proc() {
 	when ODIN_DEBUG { // Must be first!
 		context = context_global
 	}
+
+	fmt.println("Shutting down traversal")
 
 	when MEM_LEAKS {
 		never_freed := make([]u8, 1024 * 1024) // 1 MB leak to test mem tracker
