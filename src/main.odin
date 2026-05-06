@@ -130,7 +130,7 @@ step :: proc() -> bool {
 	k2.clear(k2.BLACK)
 
 	// Draw title
-	k2.draw_text("Traverse", {50, 50}, 100, k2.DARK_BLUE)
+	k2.draw_text("Traversal", {50, 50}, 100, k2.DARK_BLUE)
 
 	// Draw FPS
 	k2.draw_text(strings.to_string(fps_str), {50, 150}, 30, k2.DARK_BLUE)
