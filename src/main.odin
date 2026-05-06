@@ -7,6 +7,7 @@ import "core:container/xar"
 import "core:container/queue"
 import "core:strings"
 import "core:mem"
+import "base:runtime"
 
 // main() is for non-web builds. Web builds will call init(), step(), and
 // shutdown() directly, without calling main
@@ -16,6 +17,7 @@ main :: proc() {
 	shutdown()
 }
 
+
 PLAYER_RADIUS : f32 = 30.0
 PLAYER_WIDTH : f32 = 60.0
 PLAYER_HEIGHT : f32 = 60.0
@@ -24,9 +26,13 @@ player_pos: k2.Vec2
 player_cmd_queue: queue.Queue(PlayerCmd) // Default capacity is 16
 player_cmd_history: xar.Array(PlayerCmd, 10) // 2^10 or 1024 initial capacity
 
+// Add a command-line define to trigger mem leaks, to test the tracking allocator
+// -define:MEM_LEAKS=true
+MEM_LEAKS :: #config(MEM_LEAKS, false)
+
 when ODIN_DEBUG {
+	context_global : runtime.Context
 	mem_tracker: mem.Tracking_Allocator
-	temp_mem_tracker: mem.Tracking_Allocator
 }
 
 PlayerCmd :: enum {
@@ -38,11 +44,18 @@ PlayerCmd :: enum {
 
 init :: proc() {
 	when ODIN_DEBUG {
+		// During debug, set the allocator to a memory tracking allocator, and
+		// save off to a global variable so we can use it in other functions in
+		// WASM, since WASM has no top-level main().
+		// If not targeting WASM, just do it all at once in main()
 		mem.tracking_allocator_init(&mem_tracker, context.allocator)
 		context.allocator = mem.tracking_allocator(&mem_tracker)
-		// Handle tracking allocator stats on shutdown
+		context_global = context
 	}
 
+	when MEM_LEAKS {
+		never_freed := make([]u8, 1024 * 1024) // 1 MB leak to test mem tracker
+	}
 
 	fmt.println("Hellope, traversal!")
 	k2.init(1280, 720, "Traversal", options = {window_mode = .Windowed_Resizable})
@@ -57,6 +70,10 @@ init :: proc() {
 }
 
 step :: proc() -> bool {
+	when ODIN_DEBUG { // Must be first!
+		context = context_global
+	}
+
 	if !k2.update() {
 		return false
 	}
@@ -161,6 +178,14 @@ step :: proc() -> bool {
 }
 
 shutdown :: proc() {
+	when ODIN_DEBUG { // Must be first!
+		context = context_global
+	}
+
+	when MEM_LEAKS {
+		never_freed := make([]u8, 1024 * 1024) // 1 MB leak to test mem tracker
+	}
+
 	xar.destroy(&player_cmd_history)
 	queue.destroy(&player_cmd_queue)
 	k2.shutdown()
