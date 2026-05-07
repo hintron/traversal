@@ -85,54 +85,39 @@ step :: proc() -> bool {
 
 	// Allow multiple input commands to be queued in a single frame
 	is_shift_held := k2.key_is_held(.Left_Shift) || k2.key_is_held(.Right_Shift)
+	is_left_down := k2.key_went_down(.Left) || k2.key_went_down(.A)
+	is_right_down := k2.key_went_down(.Right) || k2.key_went_down(.D)
+	is_up_down := k2.key_went_down(.Up) || k2.key_went_down(.W)
+	is_down_down := k2.key_went_down(.Down) || k2.key_went_down(.S)
+	is_left_held := k2.key_is_held(.Left) || k2.key_is_held(.A)
+	is_right_held := k2.key_is_held(.Right) || k2.key_is_held(.D)
+	is_up_held := k2.key_is_held(.Up) || k2.key_is_held(.W)
+	is_down_held := k2.key_is_held(.Down) || k2.key_is_held(.S)
+
 	if
-		(
-			(k2.key_went_down(.Left) || k2.key_went_down(.A)) &&
-			(is_shift_held)
-		) ||
-		(
-			(k2.key_is_held(.Left) || k2.key_is_held(.A)) &&
-			(!is_shift_held)
-		)
+		((is_left_down) && (is_shift_held)) ||
+		((is_left_held) && (!is_shift_held))
 	{
 		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveLeft)
 	}
 
 	if
-		(
-			(k2.key_went_down(.Right) || k2.key_went_down(.D)) &&
-			(is_shift_held)
-		) ||
-		(
-			(k2.key_is_held(.Right) || k2.key_is_held(.D)) &&
-			(!is_shift_held)
-		)
+		((is_right_down) && (is_shift_held)) ||
+		((is_right_held) && (!is_shift_held))
 	{
 		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveRight)
 	}
 
 	if
-		(
-			(k2.key_went_down(.Up) || k2.key_went_down(.W)) &&
-			(is_shift_held)
-		) ||
-		(
-			(k2.key_is_held(.Up) || k2.key_is_held(.W)) &&
-			(!is_shift_held)
-		)
+		((is_up_down) && (is_shift_held)) ||
+		((is_up_held) && (!is_shift_held))
 	{
 		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveUp)
 	}
 
 	if
-		(
-			(k2.key_went_down(.Down) || k2.key_went_down(.S)) &&
-			(is_shift_held)
-		) ||
-		(
-			(k2.key_is_held(.Down) || k2.key_is_held(.S)) &&
-			(!is_shift_held)
-		)
+		((is_down_down) && (is_shift_held)) ||
+		((is_down_held) && (!is_shift_held))
 	{
 		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveDown)
 	}
