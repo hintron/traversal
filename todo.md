@@ -2,8 +2,6 @@
 
 ## On Deck
 
-* Get player in center of screen.
-
 * Generate 3 random obstacles.
 
 * Allow random seed to be specified.
@@ -41,6 +39,8 @@
 
 
 ## Completed
+
+* Get player in center of screen.
 
 * Show last 5 commands in command history.
 

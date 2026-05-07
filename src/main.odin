@@ -22,7 +22,8 @@ PLAYER_RADIUS : f32 = 30.0
 PLAYER_WIDTH : f32 = 60.0
 PLAYER_HEIGHT : f32 = 60.0
 PLAYER_OFFSET: k2.Vec2
-player_pos: k2.Vec2
+center_of_screen: k2.Vec2
+player_pos: k2.Vec2 // This will be relative to the center of the screen
 player_cmd_queue: queue.Queue(PlayerCmd) // Default capacity is 16
 player_cmd_history: xar.Array(PlayerCmd, 10) // 2^10 or 1024 initial capacity
 last_printed_second: i64
@@ -66,7 +67,7 @@ init :: proc() {
 		PLAYER_WIDTH / 2, PLAYER_HEIGHT / 2
 	}
 
-	player_pos = k2.get_screen_size() / 2
+	center_of_screen = k2.get_screen_size() / 2
 }
 
 step :: proc() -> bool {
@@ -119,7 +120,8 @@ step :: proc() -> bool {
 		}
 	}
 
-	// // Normalizing makes the movement not go faster when going diagonally.
+	center_of_screen = k2.get_screen_size() / 2
+	// Normalizing makes the movement not go faster when going diagonally.
 	player_pos += linalg.normalize0(movement) * k2.get_frame_time() * 400
 
 	frame_draw_time := k2.get_frame_time()
@@ -196,8 +198,8 @@ step :: proc() -> bool {
 	}
 
 	// Draw player
-	k2.draw_circle(player_pos + PLAYER_OFFSET, PLAYER_RADIUS, k2.DARK_BLUE)
-	k2.draw_circle(player_pos + PLAYER_OFFSET, PLAYER_RADIUS - 10.0, k2.BLUE)
+	k2.draw_circle(center_of_screen + player_pos + PLAYER_OFFSET, PLAYER_RADIUS, k2.DARK_BLUE)
+	k2.draw_circle(center_of_screen + player_pos + PLAYER_OFFSET, PLAYER_RADIUS - 10.0, k2.BLUE)
 
 	// Draw obstacles
 	k2.draw_rect({10, 10, 60, 60}, k2.GREEN)
