@@ -65,9 +65,8 @@ init :: proc() {
 	PLAYER_OFFSET = {
 		PLAYER_WIDTH / 2, PLAYER_HEIGHT / 2
 	}
-	player_pos = k2.Vec2 {
-		0, 0
-	}
+
+	player_pos = k2.get_screen_size() / 2
 }
 
 step :: proc() -> bool {
