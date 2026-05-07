@@ -167,7 +167,8 @@ step :: proc() -> bool {
 	k2.draw_text(strings.to_string(debug_str), {50, 200}, 30, k2.DARK_BLUE)
 
 	// Draw command history
-	k2.draw_text("Command History:", {50, 250}, 20, k2.DARK_BLUE)
+	command_history_y_offset : f32 = 250.0
+	k2.draw_text("Command History:", {50, command_history_y_offset}, 20, k2.DARK_BLUE)
 	count := 0
 	draw_offset: f32 = 0.0
 	len := xar.len(player_cmd_history)
@@ -180,18 +181,18 @@ step :: proc() -> bool {
 			continue
 		}
 
+		draw_offset += 25.0
 		strings.write_string(&fps_str, "* ")
 		switch cmd {
 			case .MoveLeft:
-				k2.draw_text("* MoveLeft", {50, 225 + draw_offset}, 20, k2.DARK_BLUE)
+				k2.draw_text("* MoveLeft", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 			case .MoveRight:
-				k2.draw_text("* MoveRight", {50, 225 + draw_offset}, 20, k2.DARK_BLUE)
+				k2.draw_text("* MoveRight", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 			case .MoveUp:
-				k2.draw_text("* MoveUp", {50, 225 + draw_offset}, 20, k2.DARK_BLUE)
+				k2.draw_text("* MoveUp", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 			case .MoveDown:
-				k2.draw_text("* MoveDown", {50, 225 + draw_offset}, 20, k2.DARK_BLUE)
+				k2.draw_text("* MoveDown", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 		}
-		draw_offset += 25.0
 	}
 
 	// Draw player
