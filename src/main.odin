@@ -148,6 +148,13 @@ step :: proc() -> bool {
 			}
 		}
 	}
+	debug_str := strings.builder_make(context.temp_allocator)
+	strings.write_string(&debug_str, "Screen: (x: ")
+	strings.write_int(&debug_str, k2.get_screen_width())
+	strings.write_string(&debug_str, ", y: ")
+	strings.write_int(&debug_str, k2.get_screen_height())
+	strings.write_string(&debug_str, ") ")
+	strings.write_string(&debug_str, fmt.tprintfln(" (%v)", k2.get_screen_size()))
 
 	k2.clear(k2.BLACK)
 
@@ -157,8 +164,11 @@ step :: proc() -> bool {
 	// Draw FPS
 	k2.draw_text(strings.to_string(fps_str), {50, 150}, 30, k2.DARK_BLUE)
 
+	// Draw Screen Dimensions
+	k2.draw_text(strings.to_string(debug_str), {50, 200}, 30, k2.DARK_BLUE)
+
 	// Draw command history
-	k2.draw_text("Command History:", {50, 200}, 20, k2.DARK_BLUE)
+	k2.draw_text("Command History:", {50, 250}, 20, k2.DARK_BLUE)
 	count := 0
 	draw_offset: f32 = 0.0
 	len := xar.len(player_cmd_history)
