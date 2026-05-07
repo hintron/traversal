@@ -193,6 +193,19 @@ step :: proc() -> bool {
 	// Draw Screen Dimensions
 	k2.draw_text(strings.to_string(debug_str), {50, 200}, 30, k2.DARK_BLUE)
 
+	// Draw background grid
+	{
+		width := f32(k2.get_screen_width())
+		height := f32(k2.get_screen_height())
+		grid_step : f32 = 50.0
+		grid_steps_x := width / grid_step
+		grid_steps_y := height / grid_step
+		for step in 0..<grid_steps_x {
+			x := step * grid_step
+			k2.draw_line({x, 0}, {x, height}, 1.0, k2.DARK_GRAY)
+		}
+	}
+
 	// Draw command history
 	command_history_y_offset : f32 = 250.0
 	k2.draw_text("Command History:", {50, command_history_y_offset}, 20, k2.DARK_BLUE)
