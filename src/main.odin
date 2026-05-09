@@ -1,6 +1,11 @@
 package traversal
 
-import k2 "odyn_deps/karl2d"
+// Third-party dependencies
+import k2 "shared:karl2d"
+import "shared:tracker" // tracker imports "shared/afmt"
+// Note: The "shared:" syntax requires registering odyn_deps as the "shared" collection with -collection:shared=odyn_deps. tracker requires this in order to import afmt.
+// Could also do "odyn_deps/karl2d"
+
 import "core:fmt"
 import "core:math/linalg"
 import "core:container/xar"
@@ -39,8 +44,9 @@ current_screen_size: k2.Vec2
 // -define:MEM_LEAKS=true
 MEM_LEAKS :: #config(MEM_LEAKS, false)
 SHUTDOWN_SECS : f64 : #config(SHUTDOWN_SECS, 0.0)
+USE_FANCY_TRACKING_ALLOCATOR :: #config(FANCY_TRACKER, false)
 
-when ODIN_DEBUG {
+when ODIN_DEBUG && !USE_FANCY_TRACKING_ALLOCATOR {
 	context_global : runtime.Context
 	mem_tracker: mem.Tracking_Allocator
 }
@@ -57,14 +63,24 @@ PlayerCmd :: enum {
 }
 
 init :: proc() {
+	when USE_FANCY_TRACKING_ALLOCATOR {
+		assert(ODIN_DEBUG, "Fancy tracking allocator can only be used in debug mode")
+	}
+
 	when ODIN_DEBUG {
 		// During debug, set the allocator to a memory tracking allocator, and
 		// save off to a global variable so we can use it in other functions in
 		// WASM, since WASM has no top-level main().
 		// If not targeting WASM, just do it all at once in main()
-		mem.tracking_allocator_init(&mem_tracker, context.allocator)
-		context.allocator = mem.tracking_allocator(&mem_tracker)
-		context_global = context
+		when USE_FANCY_TRACKING_ALLOCATOR {
+			tracker.NOPANIC = true // Override with: -define:nopanic=false
+			tracker.init_global()
+			context.allocator = tracker.global.allocator
+		} else {
+			mem.tracking_allocator_init(&mem_tracker, context.allocator)
+			context.allocator = mem.tracking_allocator(&mem_tracker)
+			context_global = context
+		}
 
 		show_debug_info = true // Show debug info by default
 	}
@@ -97,7 +113,11 @@ init :: proc() {
 
 step :: proc() -> bool {
 	when ODIN_DEBUG { // Must be first!
-		context = context_global
+		when USE_FANCY_TRACKING_ALLOCATOR {
+			context.allocator = tracker.global.allocator
+		} else {
+			context = context_global
+		}
 	}
 
 	if SHUTDOWN_SECS > 0 && k2.get_time() >= SHUTDOWN_SECS {
@@ -417,7 +437,20 @@ step :: proc() -> bool {
 
 shutdown :: proc() {
 	when ODIN_DEBUG { // Must be first!
-		context = context_global
+		when USE_FANCY_TRACKING_ALLOCATOR {
+			context.allocator = tracker.global.allocator
+			defer tracker.print_and_destroy(&tracker.global)
+		} else {
+			context = context_global
+			defer {
+				if len(mem_tracker.allocation_map) > 0 {
+					for _, entry in mem_tracker.allocation_map {
+						fmt.eprintf("%v leaked %v bytes\n", entry.location, entry.size)
+					}
+				}
+				mem.tracking_allocator_destroy(&mem_tracker)
+			}
+		}
 	}
 
 	// MGH TODO: This doesn't print out in WASM! Why doesn't WASM hit shutdown?
@@ -430,13 +463,4 @@ shutdown :: proc() {
 	xar.destroy(&player_cmd_history)
 	queue.destroy(&player_cmd_queue)
 	k2.shutdown()
-
-	when ODIN_DEBUG {
-		if len(mem_tracker.allocation_map) > 0 {
-			for _, entry in mem_tracker.allocation_map {
-				fmt.eprintf("%v leaked %v bytes\n", entry.location, entry.size)
-			}
-		}
-		mem.tracking_allocator_destroy(&mem_tracker)
-	}
 }

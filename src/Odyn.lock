@@ -5,3 +5,13 @@
 name = "karl2d"
 source = "https://github.com/karl-zylinski/karl2d"
 commit = "bc011272cde81eb132a9dcd88c0b5928735698be"
+
+[[dep]]
+name = "afmt"
+source = "https://github.com/OnlyXuul/afmt"
+commit = "8423cd7510795f6ca65770f523678fd5a2979ba8"
+
+[[dep]]
+name = "tracker"
+source = "https://github.com/OnlyXuul/tracker"
+commit = "f7438d93e1186e2f1e1422b8c6539c175f2f51b3"

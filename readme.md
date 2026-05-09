@@ -1,17 +1,16 @@
-# Traversal: [Karl2d Game Jam](https://itch.io/jam/karl2d-jam) Submission
+# Traversal
 
-https://hintron.itch.io/karl2d-game-jam-submission-traversal
+Traversal is a twitchy climbing game written in [Odin](https://odin-lang.org).
 
-UPDATE (2026-5-3): Don't vote for this!
+> [!WARNING]
+> Currently under development!
 
-Unfortunately, due to family commitments, I did not have enough free time over the weekend to get a playable game. But I was able to get the foundation started for my first Karl2d project, and I got more familiar with Odin as one of my first Odin projects. I also made sure not to use AI (though AI doesn't really know about Odin anyways), which has been fun and refreshing.
-
-I did get a player avatar moving on the screen, got user input parsed into commands, and got the commands saved to history and displayed, and got a web build working. I also mapped out my TODO list into doable steps moving forward. I probably spent 6-8 hours in total up to this point.
-
-In the upcoming week, I plan to finish what I started and post the result to GitHub pages here in this repo. I want to give the project a full 24 hours and see what I can accomplish in that time.
+This game was initially started as a [Karl2d Game Jam](https://itch.io/jam/karl2d-jam) submission (see https://hintron.itch.io/karl2d-game-jam-submission-traversal).
 
 
 # Build Instructions
+
+Make sure [Odin is installed](https://odin-lang.org/docs/install/).
 
 Clone this repo:
 ```
@@ -19,29 +18,48 @@ git clone https://github.com/hintron/traversal.git
 cd traversal/src
 ```
 
-Then, use the [Odyn reproducable vendoring tool](https://codeberg.org/razkar/odyn) to automatically download Karl2d (and potentially other third-party dependencies):
+Then, download the [Odyn reproducable vendoring tool](https://codeberg.org/razkar/odyn) and use it to automatically download Karl2d and other third-party dependencies required by Traversal:
 ```
 odyn sync
 ```
 
-Finally, build and run with the [Odin](https://odin-lang.org/docs/install/) compiler:
+Finally, build and run the game:
 ```
-odin run .
-```
-
-When using a local Git-cloned Odin, I had to do
-
-```
-make -C "<path_to_odin>/vendor/stb/src"
+../build.sh --run
 ```
 
-## Web Build
+> [!NOTE]
+> When using a local Git-cloned Odin, I had to build `stb`:
+>```
+>make -C "<path_to_odin>/vendor/stb/src"
+>```
+
+To build for both native and web, do:
+```
+../build.sh
+```
+
+> [!TIP]
+> Check out [build.sh](./build.sh) for build options.
+
+
+
+Or invoke the Odin compiler directly:
+```
+odin run . -collection:shared=odyn_deps
+```
+
+> [!NOTE]
+> The `-collection` arg is required to get the `tracker` package to properly import the `afmt` package from `odyn_deps/` (for now).
+
+
+To manually do a web build and start up an http server, do:
 
 ```
 cd src
-odin run odyn_deps/karl2d/build_web -- . -o:size
+odin run odyn_deps/karl2d/build_web -- . -collection:shared=odyn_deps -o:size
 cd bin/web
 python -m http.server
 ```
 
-Then, open `http://localhost:8000/` in a browser.
+Then, open `http://localhost:8000/` in a browser to run the game.

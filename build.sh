@@ -6,10 +6,16 @@ SRC_DIR="$REPO_DIR/src"
 cd "$SRC_DIR"
 
 DEBUG_FLAG=""
+RUN=""
 MEM_LEAK_FLAG=""
 SHUTDOWN_SECS=""
+FANCY_TRACKER=""
 for arg in "$@"; do
     case "$arg" in
+        --run)
+            shift
+            RUN="true"
+            ;;
         --debug)
             shift
             DEBUG_FLAG="-debug"
@@ -17,6 +23,10 @@ for arg in "$@"; do
         --mem-leaks)
             shift
             MEM_LEAK_FLAG="-define:MEM_LEAKS=true"
+            ;;
+        --fancy-tracker)
+            shift
+            FANCY_TRACKER="-define:FANCY_TRACKER=true"
             ;;
         --shutdown-secs)
             shift
@@ -43,15 +53,23 @@ if [ -f "$TRAVERSAL_BIN" ]; then
     rm "$TRAVERSAL_BIN"
 fi
 
-odin build . -out:"$TRAVERSAL_BIN" $DEBUG_FLAG $MEM_LEAK_FLAG $SHUTDOWN_SECS
+ODIN_CMD="odin build"
+if [ "$RUN" == "true" ]; then
+    ODIN_CMD="odin run"
+fi
+
+$ODIN_CMD . -collection:shared=odyn_deps -out:"$TRAVERSAL_BIN" $DEBUG_FLAG $MEM_LEAK_FLAG $SHUTDOWN_SECS $FANCY_TRACKER
 if [ $? -ne 0 ]; then
     echo "Build failed"
     exit 1
 fi
 
-odin run odyn_deps/karl2d/build_web -- . -o:size $DEBUG_FLAG $MEM_LEAK_FLAG $SHUTDOWN_SECS
-if [ $? -ne 0 ]; then
-    echo "Web build failed"
-    exit 1
+# Only build for web if NOT doing --run
+if [ "$RUN" == "" ]; then
+    odin run odyn_deps/karl2d/build_web -- . -collection:shared=odyn_deps -o:size $DEBUG_FLAG $MEM_LEAK_FLAG $SHUTDOWN_SECS $FANCY_TRACKER
+    if [ $? -ne 0 ]; then
+        echo "Web build failed"
+        exit 1
+    fi
 fi
 
