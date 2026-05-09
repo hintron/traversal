@@ -75,8 +75,6 @@ init :: proc() {
 	PLAYER_OFFSET = {
 		PLAYER_WIDTH / 2, PLAYER_HEIGHT / 2
 	}
-
-	center_of_screen = k2.get_screen_size() / 2
 }
 
 step :: proc() -> bool {
@@ -195,6 +193,8 @@ step :: proc() -> bool {
 		}
 	}
 
+	width := k2.get_screen_width()
+	height := k2.get_screen_height()
 	center_of_screen = k2.get_screen_size() / 2
 	// Normalizing makes the movement not go faster when going diagonally.
 	player_pos += linalg.normalize0(movement) * k2.get_frame_time() * 400
@@ -226,11 +226,10 @@ step :: proc() -> bool {
 	}
 	debug_str := strings.builder_make(context.temp_allocator)
 	strings.write_string(&debug_str, "Screen: (x: ")
-	strings.write_int(&debug_str, k2.get_screen_width())
+	strings.write_int(&debug_str, width)
 	strings.write_string(&debug_str, ", y: ")
-	strings.write_int(&debug_str, k2.get_screen_height())
-	strings.write_string(&debug_str, ") ")
-	strings.write_string(&debug_str, fmt.tprintfln(" (%v)", k2.get_screen_size()))
+	strings.write_int(&debug_str, height)
+	strings.write_string(&debug_str, ")")
 
 	k2.clear(k2.BLACK)
 
@@ -239,11 +238,9 @@ step :: proc() -> bool {
 
 	// Draw background grid
 	{
-		width := f32(k2.get_screen_width())
-		height := f32(k2.get_screen_height())
 		grid_step : f32 = 50.0
-		grid_steps_x := width / grid_step
-		grid_steps_y := height / grid_step
+		grid_steps_x := f32(width) / grid_step
+		grid_steps_y := f32(height) / grid_step
 		parallax_enabled := true
 		// Draw vertical lines
 		for step in 0..<grid_steps_x {
@@ -251,7 +248,7 @@ step :: proc() -> bool {
 			if parallax_enabled {
 				x -= player_pos.x * 0.5
 			}
-			k2.draw_line({x, 0}, {x, height}, 1.0, k2.DARK_GRAY)
+			k2.draw_line({x, 0}, {x, f32(height)}, 1.0, k2.DARK_GRAY)
 		}
 		// Draw horizontal lines
 		for step in 0..<grid_steps_y {
@@ -259,12 +256,12 @@ step :: proc() -> bool {
 			if parallax_enabled {
 				y -= player_pos.y * 0.5
 			}
-			k2.draw_line({0, y}, {width, y}, 1.0, k2.DARK_GRAY)
+			k2.draw_line({0, y}, {f32(width), y}, 1.0, k2.DARK_GRAY)
 		}
 		// Draw cool web-looking happy little accident while trying to draw horizontal lines
 		for step in 0..<grid_steps_y {
 			y := step * grid_step
-			k2.draw_line({0, y}, {y, height}, 1.0, k2.DARK_GRAY)
+			k2.draw_line({0, y}, {y, f32(height)}, 1.0, k2.DARK_GRAY)
 		}
 	}
 
@@ -313,7 +310,7 @@ step :: proc() -> bool {
 			}
 		}
 	} else {
-		k2.draw_text("Press P to show debug info", {10, f32(k2.get_screen_height()) - 40.0}, 30, k2.DARK_BLUE)
+		k2.draw_text("Press P to show debug info", {10, f32(height) - 40.0}, 30, k2.DARK_BLUE)
 	}
 
 	// Draw player
