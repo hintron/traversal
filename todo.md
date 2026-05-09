@@ -2,6 +2,18 @@
 
 ## On Deck
 
+* Show debug info with a button press
+
+* Get a camera set up, and make sure player movement and grid still work.
+
+* Have the camera follow the player's movement.
+
+* Add a debug feature where a rectangle is drawn around original camera view, and the camera is zoomed out, so that I know where the camera would be looking normally (for despawning entities).
+
+* Create a simple set of path segments that the player moves across.
+
+* Get the player's movement to snap to path segments.
+
 * Generate 3 random obstacles.
 
 * Allow random seed to be specified.
@@ -37,6 +49,8 @@
 
 * Show the equation used to generate score, so players know what to game for.
 
+* Implement a camera shake effect on a button press
+
 
 ## Completed
 
@@ -50,6 +64,8 @@
 
 
 ## Ideas
+
+* Make the camera smoothly follow the player, with an ease in/ease out motion (or with a box trigger, where X pixels from the edge triggers a camera move)
 
 * Set 60 or 120 or 144 FPS as the frame rate target.
 
