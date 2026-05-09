@@ -83,6 +83,10 @@ step :: proc() -> bool {
 		return false
 	}
 
+	if k2.key_went_down(.Escape) {
+		return false
+	}
+
 	// Allow multiple input commands to be queued in a single frame
 	is_shift_held := k2.key_is_held(.Left_Shift) || k2.key_is_held(.Right_Shift)
 	is_left_down := k2.key_went_down(.Left) || k2.key_went_down(.A)
