@@ -2,8 +2,6 @@
 
 ## On Deck
 
-* Show debug info with a button press
-
 * Get a camera set up, and make sure player movement and grid still work.
 
 * Have the camera follow the player's movement.
@@ -53,6 +51,8 @@
 
 
 ## Completed
+
+* Show debug info with a button press
 
 * Get player in center of screen.
 

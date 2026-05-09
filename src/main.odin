@@ -27,6 +27,9 @@ player_pos: k2.Vec2 // This will be relative to the center of the screen
 player_cmd_queue: queue.Queue(PlayerCmd) // Default capacity is 16
 player_cmd_history: xar.Array(PlayerCmd, 10) // 2^10 or 1024 initial capacity
 last_printed_second: i64
+
+show_debug_info : bool
+
 // Add a command-line define to trigger mem leaks, to test the tracking allocator
 // -define:MEM_LEAKS=true
 MEM_LEAKS :: #config(MEM_LEAKS, false)
@@ -57,6 +60,8 @@ init :: proc() {
 		mem.tracking_allocator_init(&mem_tracker, context.allocator)
 		context.allocator = mem.tracking_allocator(&mem_tracker)
 		context_global = context
+
+		show_debug_info = true // Show debug info by default
 	}
 
 	when MEM_LEAKS {
@@ -89,6 +94,10 @@ step :: proc() -> bool {
 
 	if k2.key_went_down(.Escape) {
 		return false
+	}
+
+	if k2.key_went_down(.P) {
+		show_debug_info = !show_debug_info
 	}
 
 	// Allow multiple input commands to be queued in a single frame
@@ -260,7 +269,7 @@ step :: proc() -> bool {
 	}
 
 	// Debug info block
-	{
+	if show_debug_info {
 		// Draw FPS
 		k2.draw_text(strings.to_string(fps_str), {50, 150}, 30, k2.DARK_BLUE)
 
@@ -303,6 +312,8 @@ step :: proc() -> bool {
 					k2.draw_text("* MoveDownRight", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 			}
 		}
+	} else {
+		k2.draw_text("Press P to show debug info", {10, f32(k2.get_screen_height()) - 40.0}, 30, k2.DARK_BLUE)
 	}
 
 	// Draw player
