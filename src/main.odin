@@ -228,12 +228,6 @@ step :: proc() -> bool {
 	// Draw title
 	k2.draw_text("Traversal", {50, 50}, 100, k2.DARK_BLUE)
 
-	// Draw FPS
-	k2.draw_text(strings.to_string(fps_str), {50, 150}, 30, k2.DARK_BLUE)
-
-	// Draw Screen Dimensions
-	k2.draw_text(strings.to_string(debug_str), {50, 200}, 30, k2.DARK_BLUE)
-
 	// Draw background grid
 	{
 		width := f32(k2.get_screen_width())
@@ -265,40 +259,49 @@ step :: proc() -> bool {
 		}
 	}
 
-	// Draw command history
-	command_history_y_offset : f32 = 250.0
-	k2.draw_text("Command History:", {50, command_history_y_offset}, 20, k2.DARK_BLUE)
-	count := 0
-	draw_offset: f32 = 0.0
-	len := xar.len(player_cmd_history)
-	command_history_iter := xar.iterator(&player_cmd_history)
-	for cmd in xar.iterate_by_val(&command_history_iter) {
-		count += 1
+	// Debug info block
+	{
+		// Draw FPS
+		k2.draw_text(strings.to_string(fps_str), {50, 150}, 30, k2.DARK_BLUE)
 
-		// Show only the last 5 commands
-		if len > 5 && count <= len - 5 {
-			continue
-		}
+		// Draw Screen Dimensions
+		k2.draw_text(strings.to_string(debug_str), {50, 200}, 30, k2.DARK_BLUE)
 
-		draw_offset += 25.0
-		strings.write_string(&fps_str, "* ")
-		switch cmd {
-			case .MoveLeft:
-				k2.draw_text("* MoveLeft", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
-			case .MoveRight:
-				k2.draw_text("* MoveRight", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
-			case .MoveUp:
-				k2.draw_text("* MoveUp", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
-			case .MoveDown:
-				k2.draw_text("* MoveDown", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
-			case .MoveUpLeft:
-				k2.draw_text("* MoveUpLeft", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
-			case .MoveUpRight:
-				k2.draw_text("* MoveUpRight", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
-			case .MoveDownLeft:
-				k2.draw_text("* MoveDownLeft", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
-			case .MoveDownRight:
-				k2.draw_text("* MoveDownRight", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+		// Draw command history
+		command_history_y_offset : f32 = 250.0
+		k2.draw_text("Command History:", {50, command_history_y_offset}, 20, k2.DARK_BLUE)
+		count := 0
+		draw_offset: f32 = 0.0
+		len := xar.len(player_cmd_history)
+		command_history_iter := xar.iterator(&player_cmd_history)
+		for cmd in xar.iterate_by_val(&command_history_iter) {
+			count += 1
+
+			// Show only the last 5 commands
+			if len > 5 && count <= len - 5 {
+				continue
+			}
+
+			draw_offset += 25.0
+			strings.write_string(&fps_str, "* ")
+			switch cmd {
+				case .MoveLeft:
+					k2.draw_text("* MoveLeft", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+				case .MoveRight:
+					k2.draw_text("* MoveRight", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+				case .MoveUp:
+					k2.draw_text("* MoveUp", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+				case .MoveDown:
+					k2.draw_text("* MoveDown", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+				case .MoveUpLeft:
+					k2.draw_text("* MoveUpLeft", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+				case .MoveUpRight:
+					k2.draw_text("* MoveUpRight", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+				case .MoveDownLeft:
+					k2.draw_text("* MoveDownLeft", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+				case .MoveDownRight:
+					k2.draw_text("* MoveDownRight", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+			}
 		}
 	}
 
