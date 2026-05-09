@@ -322,6 +322,14 @@ step :: proc() -> bool {
 
 	// Debug info block
 	if show_debug_info {
+		player_str := strings.builder_make(context.temp_allocator)
+		strings.write_string(&player_str, "Player: (x: ")
+		strings.write_f32(&player_str, player_pos.x, 'f')
+		strings.write_string(&player_str, ", y: ")
+		strings.write_f32(&player_str, player_pos.y, 'f')
+		strings.write_string(&player_str, ")")
+		k2.draw_text(strings.to_string(player_str), {50, 100}, 30, k2.DARK_BLUE)
+
 		debug_str := strings.builder_make(context.temp_allocator)
 		strings.write_string(&debug_str, "Screen: (x: ")
 		strings.write_int(&debug_str, width)
