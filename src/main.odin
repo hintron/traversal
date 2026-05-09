@@ -104,22 +104,19 @@ step :: proc() -> bool {
 	{
 		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveLeft)
 	}
-
-	if
+	else if
 		(is_right_down && is_shift_held) ||
 		(is_right_held && !is_shift_held)
 	{
 		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveRight)
 	}
-
-	if
+	else if
 		(is_up_down && is_shift_held) ||
 		(is_up_held && !is_shift_held)
 	{
 		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveUp)
 	}
-
-	if
+	else if
 		(is_down_down && is_shift_held) ||
 		(is_down_held && !is_shift_held)
 	{
