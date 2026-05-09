@@ -17,6 +17,9 @@ main :: proc() {
 	shutdown()
 }
 
+TITLE :: "Traversal"
+TITLE_FONT_SIZE :: 100
+title_center_offset_x: f32
 
 PLAYER_RADIUS : f32 = 30.0
 PLAYER_WIDTH : f32 = 60.0
@@ -69,7 +72,13 @@ init :: proc() {
 	}
 
 	fmt.println("Hellope, traversal!")
-	k2.init(1280, 720, "Traversal", options = {window_mode = .Windowed_Resizable})
+	k2.init(1280, 720, TITLE, options = {window_mode = .Windowed_Resizable})
+
+	{
+		title_text_size := k2.measure_text(TITLE, TITLE_FONT_SIZE)
+		title_center_offset_x = title_text_size.x / 2
+	}
+
 
 	// Initialize globals
 	PLAYER_OFFSET = {
@@ -233,8 +242,8 @@ step :: proc() -> bool {
 
 	k2.clear(k2.BLACK)
 
-	// Draw title
-	k2.draw_text("Traversal", {50, 50}, 100, k2.DARK_BLUE)
+	// Draw title in center of screen
+	k2.draw_text(TITLE, {f32(width) / 2 - title_center_offset_x, 20}, TITLE_FONT_SIZE, k2.DARK_BLUE)
 
 	// Draw background grid
 	{
