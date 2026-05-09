@@ -204,6 +204,11 @@ step :: proc() -> bool {
 			x := step * grid_step
 			k2.draw_line({x, 0}, {x, height}, 1.0, k2.DARK_GRAY)
 		}
+		// Draw cool web-looking happy little accident while trying to draw horizontal lines
+		for step in 0..<grid_steps_y {
+			y := step * grid_step
+			k2.draw_line({0, y}, {y, width}, 1.0, k2.DARK_GRAY)
+		}
 	}
 
 	// Draw command history
