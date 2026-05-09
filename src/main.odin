@@ -453,7 +453,6 @@ shutdown :: proc() {
 		}
 	}
 
-	// MGH TODO: This doesn't print out in WASM! Why doesn't WASM hit shutdown?
 	fmt.println("Shutting down traversal", flush = true)
 
 	when MEM_LEAKS {
