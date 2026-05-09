@@ -204,14 +204,21 @@ step :: proc() -> bool {
 		grid_step : f32 = 50.0
 		grid_steps_x := width / grid_step
 		grid_steps_y := height / grid_step
+		parallax_enabled := true
 		// Draw vertical lines
 		for step in 0..<grid_steps_x {
 			x := step * grid_step
+			if parallax_enabled {
+				x -= player_pos.x * 0.5
+			}
 			k2.draw_line({x, 0}, {x, height}, 1.0, k2.DARK_GRAY)
 		}
 		// Draw horizontal lines
 		for step in 0..<grid_steps_y {
 			y := step * grid_step
+			if parallax_enabled {
+				y -= player_pos.y * 0.5
+			}
 			k2.draw_line({0, y}, {width, y}, 1.0, k2.DARK_GRAY)
 		}
 		// Draw cool web-looking happy little accident while trying to draw horizontal lines
