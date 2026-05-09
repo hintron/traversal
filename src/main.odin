@@ -42,6 +42,10 @@ PlayerCmd :: enum {
 	MoveRight,
 	MoveUp,
 	MoveDown,
+	MoveUpLeft,
+	MoveUpRight,
+	MoveDownLeft,
+	MoveDownRight,
 }
 
 init :: proc() {
@@ -99,6 +103,30 @@ step :: proc() -> bool {
 	is_down_held := k2.key_is_held(.Down) || k2.key_is_held(.S)
 
 	if
+		(is_up_down && is_left_down && is_shift_held) ||
+		(is_up_held && is_left_held && !is_shift_held)
+	{
+		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveUpLeft)
+	}
+	else if
+		(is_up_down && is_right_down && is_shift_held) ||
+		(is_up_held && is_right_held && !is_shift_held)
+	{
+		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveUpRight)
+	}
+	else if
+		(is_down_down && is_left_down && is_shift_held) ||
+		(is_down_held && is_left_held && !is_shift_held)
+	{
+		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveDownLeft)
+	}
+	else if
+		(is_down_down && is_right_down && is_shift_held) ||
+		(is_down_held && is_right_held && !is_shift_held)
+	{
+		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveDownRight)
+	}
+	else if
 		(is_left_down && is_shift_held) ||
 		(is_left_held && !is_shift_held)
 	{
@@ -142,6 +170,18 @@ step :: proc() -> bool {
 			case .MoveUp:
 				movement.y -= 10
 			case .MoveDown:
+				movement.y += 10
+			case .MoveUpLeft:
+				movement.x -= 10
+				movement.y -= 10
+			case .MoveUpRight:
+				movement.x += 10
+				movement.y -= 10
+			case .MoveDownLeft:
+				movement.x -= 10
+				movement.y += 10
+			case .MoveDownRight:
+				movement.x += 10
 				movement.y += 10
 		}
 	}
@@ -251,6 +291,14 @@ step :: proc() -> bool {
 				k2.draw_text("* MoveUp", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 			case .MoveDown:
 				k2.draw_text("* MoveDown", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+			case .MoveUpLeft:
+				k2.draw_text("* MoveUpLeft", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+			case .MoveUpRight:
+				k2.draw_text("* MoveUpRight", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+			case .MoveDownLeft:
+				k2.draw_text("* MoveDownLeft", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+			case .MoveDownRight:
+				k2.draw_text("* MoveDownRight", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 		}
 	}
 
