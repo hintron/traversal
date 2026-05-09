@@ -99,29 +99,29 @@ step :: proc() -> bool {
 	is_down_held := k2.key_is_held(.Down) || k2.key_is_held(.S)
 
 	if
-		((is_left_down) && (is_shift_held)) ||
-		((is_left_held) && (!is_shift_held))
+		(is_left_down && is_shift_held) ||
+		(is_left_held && !is_shift_held)
 	{
 		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveLeft)
 	}
 
 	if
-		((is_right_down) && (is_shift_held)) ||
-		((is_right_held) && (!is_shift_held))
+		(is_right_down && is_shift_held) ||
+		(is_right_held && !is_shift_held)
 	{
 		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveRight)
 	}
 
 	if
-		((is_up_down) && (is_shift_held)) ||
-		((is_up_held) && (!is_shift_held))
+		(is_up_down && is_shift_held) ||
+		(is_up_held && !is_shift_held)
 	{
 		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveUp)
 	}
 
 	if
-		((is_down_down) && (is_shift_held)) ||
-		((is_down_held) && (!is_shift_held))
+		(is_down_down && is_shift_held) ||
+		(is_down_held && !is_shift_held)
 	{
 		queue.enqueue(&player_cmd_queue, PlayerCmd.MoveDown)
 	}
