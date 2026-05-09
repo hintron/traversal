@@ -233,13 +233,6 @@ step :: proc() -> bool {
 			}
 		}
 	}
-	debug_str := strings.builder_make(context.temp_allocator)
-	strings.write_string(&debug_str, "Screen: (x: ")
-	strings.write_int(&debug_str, width)
-	strings.write_string(&debug_str, ", y: ")
-	strings.write_int(&debug_str, height)
-	strings.write_string(&debug_str, ")")
-
 	k2.clear(k2.BLACK)
 
 	// Draw title in center of screen
@@ -276,6 +269,13 @@ step :: proc() -> bool {
 
 	// Debug info block
 	if show_debug_info {
+		debug_str := strings.builder_make(context.temp_allocator)
+		strings.write_string(&debug_str, "Screen: (x: ")
+		strings.write_int(&debug_str, width)
+		strings.write_string(&debug_str, ", y: ")
+		strings.write_int(&debug_str, height)
+		strings.write_string(&debug_str, ")")
+
 		// Draw FPS
 		k2.draw_text(strings.to_string(fps_str), {50, 150}, 30, k2.DARK_BLUE)
 
