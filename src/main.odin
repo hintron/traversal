@@ -32,6 +32,8 @@ player_cmd_history: xar.Array(PlayerCmd, 10) // 2^10 or 1024 initial capacity
 last_printed_second: i64
 
 show_debug_info : bool
+zoom_level : f32 = 1.0
+current_screen_size: k2.Vec2
 
 // Add a command-line define to trigger mem leaks, to test the tracking allocator
 // -define:MEM_LEAKS=true
@@ -74,6 +76,13 @@ init :: proc() {
 	fmt.println("Hellope, traversal!")
 	k2.init(1280, 720, TITLE, options = {window_mode = .Windowed_Resizable})
 
+	current_screen_size = k2.get_screen_size()
+	k2.set_camera(k2.Camera {
+		target = {0, 0},
+		// offset = current_screen_size / 2,
+		zoom = zoom_level,
+	})
+
 	{
 		title_text_size := k2.measure_text(TITLE, TITLE_FONT_SIZE)
 		title_center_offset_x = title_text_size.x / 2
@@ -107,8 +116,52 @@ step :: proc() -> bool {
 		show_debug_info = !show_debug_info
 	}
 
-	// Allow multiple input commands to be queued in a single frame
+	screen_size_changed := false
+	if k2.get_screen_size() != current_screen_size {
+		current_screen_size = k2.get_screen_size()
+		screen_size_changed = true
+	}
+
 	is_shift_held := k2.key_is_held(.Left_Shift) || k2.key_is_held(.Right_Shift)
+	zoom_changed := false
+	if
+		(is_shift_held && k2.key_went_down(.Minus)) ||
+		(!is_shift_held && k2.key_is_held(.Minus))
+	{
+		if zoom_level >= 1.5 {
+			zoom_level -= 0.5
+		} else {
+			zoom_level -= 0.125
+		}
+		if zoom_level < 0.125 {
+			zoom_level = 0.125
+		}
+		zoom_changed = true
+	} else if
+		(is_shift_held && k2.key_went_down(.Equal)) ||
+		(!is_shift_held && k2.key_is_held(.Equal))
+	{
+		if zoom_level >= 1.0 {
+			zoom_level += 0.5
+		} else {
+			zoom_level += 0.125
+		}
+		if zoom_level > 5.0 {
+			zoom_level = 5.0
+		}
+		zoom_changed = true
+	}
+
+	// Update the camera if zoom or screen size changed
+	if zoom_changed || screen_size_changed {
+		k2.set_camera(k2.Camera {
+			target = {0, 0},
+			// offset = current_screen_size / 2,
+			zoom = zoom_level,
+		})
+	}
+
+	// Allow multiple input commands to be queued in a single frame
 	is_left_down := k2.key_went_down(.Left) || k2.key_went_down(.A)
 	is_right_down := k2.key_went_down(.Right) || k2.key_went_down(.D)
 	is_up_down := k2.key_went_down(.Up) || k2.key_went_down(.W)
@@ -204,7 +257,7 @@ step :: proc() -> bool {
 
 	width := k2.get_screen_width()
 	height := k2.get_screen_height()
-	center_of_screen = k2.get_screen_size() / 2
+	center_of_screen = current_screen_size / 2
 	// Normalizing makes the movement not go faster when going diagonally.
 	player_pos += linalg.normalize0(movement) * k2.get_frame_time() * 400
 
@@ -274,6 +327,8 @@ step :: proc() -> bool {
 		strings.write_int(&debug_str, width)
 		strings.write_string(&debug_str, ", y: ")
 		strings.write_int(&debug_str, height)
+		strings.write_string(&debug_str, ", zoom: ")
+		strings.write_f32(&debug_str, zoom_level, 'f')
 		strings.write_string(&debug_str, ")")
 
 		// Draw FPS

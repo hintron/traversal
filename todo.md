@@ -2,11 +2,7 @@
 
 ## On Deck
 
-* Get a camera set up, and make sure player movement and grid still work.
-
 * Have the camera follow the player's movement.
-
-* Add a debug feature where a rectangle is drawn around original camera view, and the camera is zoomed out, so that I know where the camera would be looking normally (for despawning entities).
 
 * Create a simple set of path segments that the player moves across.
 
@@ -51,6 +47,10 @@
 
 
 ## Completed
+
+* Add ability to zoom the camera in and out, for debug.
+
+* Get a camera set up, and make sure player movement and grid still work.
 
 * Show debug info with a button press
 
