@@ -279,7 +279,15 @@ step :: proc() -> bool {
 			}
 			str := strings.to_string(shutdown_str)
 			shutdown_str_center_offset_x := k2.measure_text(TITLE, TITLE_FONT_SIZE).x / 2
-			k2.draw_text(str, {f32(width) / 2 - shutdown_str_center_offset_x, f32(height) / 2}, 30, k2.RED)
+			k2.draw_text(
+				str,
+				{
+					f32(width) / 2 - shutdown_str_center_offset_x,
+					f32(height) / 2
+				},
+				30,
+				k2.RED
+			)
 
 			if seconds_remaining != last_printed_second {
 				if last_printed_second != 0 {
