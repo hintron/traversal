@@ -112,6 +112,8 @@ step :: proc() -> bool {
 		return false
 	}
 
+	k2.clear(k2.BLACK)
+
 	if k2.key_went_down(.P) {
 		show_debug_info = !show_debug_info
 	}
@@ -263,30 +265,30 @@ step :: proc() -> bool {
 
 	frame_draw_time := k2.get_frame_time()
 	fps := 1.0 / frame_draw_time
-	fps_str := strings.builder_make(context.temp_allocator)
-	strings.write_string(&fps_str, "FPS: ")
-	strings.write_f32(&fps_str, fps, 'f')
-	strings.write_string(&fps_str, " (")
-	strings.write_f32(&fps_str, frame_draw_time * 1000, 'f')
-	strings.write_string(&fps_str, " ms)")
+
 	if SHUTDOWN_SECS > 0 {
 		seconds_remaining := i64(SHUTDOWN_SECS - k2.get_time()) + 1
 		if seconds_remaining >= 0 {
-			strings.write_string(&fps_str, " - Shutting down in ")
-			strings.write_i64(&fps_str, seconds_remaining)
-			strings.write_string(&fps_str, " second")
+			// Draw shutdown timer
+			shutdown_str := strings.builder_make(context.temp_allocator)
+			strings.write_string(&shutdown_str, "Shutting down in ")
+			strings.write_i64(&shutdown_str, seconds_remaining)
+			strings.write_string(&shutdown_str, " second")
 			if seconds_remaining != 1 {
-				strings.write_string(&fps_str, "s")
+				strings.write_string(&shutdown_str, "s")
 			}
+			str := strings.to_string(shutdown_str)
+			shutdown_str_center_offset_x := k2.measure_text(TITLE, TITLE_FONT_SIZE).x / 2
+			k2.draw_text(str, {f32(width) / 2 - shutdown_str_center_offset_x, f32(height) / 2}, 30, k2.RED)
+
 			if seconds_remaining != last_printed_second {
 				if last_printed_second != 0 {
-					fmt.println("Shutting down in ", seconds_remaining, " seconds")
+					fmt.println(str)
 				}
 				last_printed_second = seconds_remaining
 			}
 		}
 	}
-	k2.clear(k2.BLACK)
 
 	// Draw title in center of screen
 	k2.draw_text(TITLE, {f32(width) / 2 - title_center_offset_x, 20}, TITLE_FONT_SIZE, k2.DARK_BLUE)
@@ -322,6 +324,7 @@ step :: proc() -> bool {
 
 	// Debug info block
 	if show_debug_info {
+		// Draw player info
 		player_str := strings.builder_make(context.temp_allocator)
 		strings.write_string(&player_str, "Player: (x: ")
 		strings.write_f32(&player_str, player_pos.x, 'f')
@@ -330,6 +333,16 @@ step :: proc() -> bool {
 		strings.write_string(&player_str, ")")
 		k2.draw_text(strings.to_string(player_str), {50, 100}, 30, k2.DARK_BLUE)
 
+		// Draw FPS
+		fps_str := strings.builder_make(context.temp_allocator)
+		strings.write_string(&fps_str, "FPS: ")
+		strings.write_f32(&fps_str, fps, 'f')
+		strings.write_string(&fps_str, " (")
+		strings.write_f32(&fps_str, frame_draw_time * 1000, 'f')
+		strings.write_string(&fps_str, " ms)")
+		k2.draw_text(strings.to_string(fps_str), {50, 150}, 30, k2.DARK_BLUE)
+
+		// Draw Screen Dimensions and camera zoom
 		debug_str := strings.builder_make(context.temp_allocator)
 		strings.write_string(&debug_str, "Screen: (x: ")
 		strings.write_int(&debug_str, width)
@@ -338,11 +351,6 @@ step :: proc() -> bool {
 		strings.write_string(&debug_str, ", zoom: ")
 		strings.write_f32(&debug_str, zoom_level, 'f')
 		strings.write_string(&debug_str, ")")
-
-		// Draw FPS
-		k2.draw_text(strings.to_string(fps_str), {50, 150}, 30, k2.DARK_BLUE)
-
-		// Draw Screen Dimensions
 		k2.draw_text(strings.to_string(debug_str), {50, 200}, 30, k2.DARK_BLUE)
 
 		// Draw command history
