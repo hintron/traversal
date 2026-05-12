@@ -9,7 +9,7 @@ commit = "8423cd7510795f6ca65770f523678fd5a2979ba8"
 [[dep]]
 name = "tracker"
 source = "https://github.com/OnlyXuul/tracker"
-commit = "f7438d93e1186e2f1e1422b8c6539c175f2f51b3"
+commit = "3beb8b269073fe293f003cde4219b33721e1cba6"
 
 [[dep]]
 name = "karl2d"
