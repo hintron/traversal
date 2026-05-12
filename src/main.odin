@@ -8,6 +8,7 @@ import "shared:tracker" // tracker imports "shared/afmt"
 
 import "core:fmt"
 import "core:math/linalg"
+import "core:math"
 import "core:container/xar"
 import "core:container/queue"
 import "core:strings"
@@ -37,6 +38,7 @@ player_cmd_history: xar.Array(PlayerCmd, 10) // 2^10 or 1024 initial capacity
 last_printed_second: i64
 
 show_debug_info : bool
+colorful_background_mode : bool
 zoom_level : f32 = 1.0
 current_screen_size: k2.Vec2
 
@@ -132,10 +134,23 @@ step :: proc() -> bool {
 		return false
 	}
 
-	k2.clear(k2.BLACK)
+	if colorful_background_mode {
+		t := f32(k2.get_time())
+		// Making sure each value never drops below half prevents an unpleasant "blackout" effect as the colors change.
+		red   := u8((math.sin_f32(t + 0.0)   * 0.5 + 0.5) * 255)
+		green := u8((math.sin_f32(t + 2.094) * 0.5 + 0.5) * 255)
+		blue  := u8((math.sin_f32(t + 4.189) * 0.5 + 0.5) * 255)
+		color := k2.Color{red, green, blue, 255}
+		k2.clear(color)
+	} else {
+		k2.clear(k2.BLACK)
+	}
 
 	if k2.key_went_down(.P) {
 		show_debug_info = !show_debug_info
+	}
+	if k2.key_went_down(.C) {
+		colorful_background_mode = !colorful_background_mode
 	}
 
 	screen_size_changed := false
