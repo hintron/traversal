@@ -53,6 +53,9 @@ when ODIN_DEBUG && !USE_FANCY_TRACKING_ALLOCATOR {
 	mem_tracker: mem.Tracking_Allocator
 }
 
+// Ensure that the fancy tracking allocator can only be used in debug mode
+#assert(!USE_FANCY_TRACKING_ALLOCATOR || ODIN_DEBUG)
+
 PlayerCmd :: enum {
 	MoveLeft,
 	MoveRight,
@@ -65,10 +68,6 @@ PlayerCmd :: enum {
 }
 
 init :: proc() {
-	when USE_FANCY_TRACKING_ALLOCATOR {
-		assert(ODIN_DEBUG, "Fancy tracking allocator can only be used in debug mode")
-	}
-
 	when ODIN_DEBUG {
 		// During debug, set the allocator to a memory tracking allocator, and
 		// save off to a global variable so we can use it in other functions in
