@@ -41,6 +41,9 @@ show_debug_info : bool
 colorful_background_mode : bool
 zoom_level : f32 = 1.0
 current_screen_size: k2.Vec2
+// The camera's position (target) is the upper-left corner of the window.
+// To make that position be the center of the screen, we need to add an offset to target.
+world_camera: k2.Camera
 
 // Add a command-line define to trigger mem leaks, to test the tracking allocator
 // -define:MEM_LEAKS=true
@@ -93,18 +96,10 @@ init :: proc() {
 	fmt.println("Hellope, traversal!")
 	k2.init(1280, 720, TITLE, options = {window_mode = .Windowed_Resizable})
 
-	current_screen_size = k2.get_screen_size()
-	k2.set_camera(k2.Camera {
-		target = {0, 0},
-		// offset = current_screen_size / 2,
-		zoom = zoom_level,
-	})
-
 	{
 		title_text_size := k2.measure_text(TITLE, TITLE_FONT_SIZE)
 		title_center_offset_x = title_text_size.x / 2
 	}
-
 
 	// Initialize globals
 	PLAYER_OFFSET = {
@@ -133,6 +128,18 @@ step :: proc() -> bool {
 		return false
 	}
 
+	screen_size_changed_this_frame : bool
+	if k2.get_screen_size() != current_screen_size {
+		current_screen_size = k2.get_screen_size()
+		screen_size_changed_this_frame = true
+	}
+
+	if screen_size_changed_this_frame {
+		world_camera.offset = current_screen_size / 2
+		world_camera.zoom = zoom_level
+		k2.set_camera(world_camera)
+	}
+
 	if colorful_background_mode {
 		t := f32(k2.get_time())
 		// Making sure each value never drops below half prevents an unpleasant "blackout" effect as the colors change.
@@ -152,11 +159,6 @@ step :: proc() -> bool {
 		colorful_background_mode = !colorful_background_mode
 	}
 
-	screen_size_changed := false
-	if k2.get_screen_size() != current_screen_size {
-		current_screen_size = k2.get_screen_size()
-		screen_size_changed = true
-	}
 
 	is_shift_held := k2.key_is_held(.Left_Shift) || k2.key_is_held(.Right_Shift)
 	zoom_changed := false
@@ -189,12 +191,8 @@ step :: proc() -> bool {
 	}
 
 	// Update the camera if zoom or screen size changed
-	if zoom_changed || screen_size_changed {
-		k2.set_camera(k2.Camera {
-			target = {0, 0},
-			// offset = current_screen_size / 2,
-			zoom = zoom_level,
-		})
+	if zoom_changed {
+		world_camera.zoom = zoom_level
 	}
 
 	// Allow multiple input commands to be queued in a single frame
@@ -436,8 +434,8 @@ step :: proc() -> bool {
 	}
 
 	// Draw player
-	k2.draw_circle(center_of_screen + player_pos + PLAYER_OFFSET, PLAYER_RADIUS, k2.DARK_BLUE)
-	k2.draw_circle(center_of_screen + player_pos + PLAYER_OFFSET, PLAYER_RADIUS - 10.0, k2.BLUE)
+	k2.draw_circle(player_pos, PLAYER_RADIUS, k2.DARK_BLUE)
+	k2.draw_circle(player_pos, PLAYER_RADIUS - 10.0, k2.BLUE)
 
 	// Draw obstacles
 	k2.draw_rect({10, 10, 60, 60}, k2.GREEN)
