@@ -2,6 +2,16 @@
 
 ## On Deck
 
+* Create basic collision detection with an object.
+
+* Create jump nodes of two things connected by a line, where the first node stores the location or a pointer to the second node (or do Anton's intrusive lists?)
+
+* When colliding with one end of a jump node, move the player to the other end.
+
+* Consume the node and add juice.
+
+* Auto generate multiple nodes
+
 * Have the camera follow the player's movement.
 
 * Create a simple set of path segments that the player moves across.
