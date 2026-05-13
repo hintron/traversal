@@ -356,9 +356,9 @@ step :: proc() -> bool {
 			k2.draw_line({-f32(width), y}, {f32(width), y}, 1.0, k2.DARK_GRAY)
 		}
 		// Draw cool web-looking happy little accident while trying to draw horizontal lines
-		for step in 0..<grid_steps_y {
+		for step in -(f32(height)/2)..<grid_steps_y {
 			y := step * grid_step
-			k2.draw_line({0, y}, {y, f32(height)}, 1.0, k2.DARK_GRAY)
+			k2.draw_line({-(f32(width)/2), y}, {y, f32(height)}, 1.0, k2.DARK_GRAY)
 		}
 	}
 
