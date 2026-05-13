@@ -330,8 +330,8 @@ step :: proc() -> bool {
 		}
 	}
 
-	// Draw title in center of screen
-	k2.draw_text(TITLE, {f32(width) / 2 - title_center_offset_x, 20}, TITLE_FONT_SIZE, k2.DARK_BLUE)
+	screen_origin_x := -f32(width) / 2
+	screen_origin_y := -f32(height) / 2
 
 	// Draw background grid
 	{
@@ -356,14 +356,25 @@ step :: proc() -> bool {
 			k2.draw_line({-f32(width), y}, {f32(width), y}, 1.0, k2.DARK_GRAY)
 		}
 		// Draw cool web-looking happy little accident while trying to draw horizontal lines
-		for step in -(f32(height)/2)..<grid_steps_y {
+		for step in screen_origin_y..<grid_steps_y {
 			y := step * grid_step
-			k2.draw_line({-(f32(width)/2), y}, {y, f32(height)}, 1.0, k2.DARK_GRAY)
+			k2.draw_line({screen_origin_x, y}, {y, f32(height)}, 1.0, k2.DARK_GRAY)
 		}
 	}
 
 	// Debug info block
 	if show_debug_info {
+		debug_info_x := screen_origin_x + 50
+		debug_info_y := screen_origin_y + f32(height) - 410
+		line_hieght : f32 = 30.0
+		margin_y : f32 = 10.0
+
+		// Draw background of debug info panel
+		k2.draw_rect(
+			k2.Rect{debug_info_x - 10, debug_info_y, 550, 400},
+			k2.Color{255, 255, 255, 200},
+		)
+
 		// Draw player info
 		player_str := strings.builder_make(context.temp_allocator)
 		strings.write_string(&player_str, "Player: (x: ")
@@ -371,7 +382,7 @@ step :: proc() -> bool {
 		strings.write_string(&player_str, ", y: ")
 		strings.write_f32(&player_str, player_pos.y, 'f')
 		strings.write_string(&player_str, ")")
-		k2.draw_text(strings.to_string(player_str), {50, 100}, 30, k2.DARK_BLUE)
+		k2.draw_text(strings.to_string(player_str), {debug_info_x, debug_info_y + margin_y}, 30, k2.DARK_BLUE)
 
 		// Draw FPS
 		fps_str := strings.builder_make(context.temp_allocator)
@@ -380,7 +391,7 @@ step :: proc() -> bool {
 		strings.write_string(&fps_str, " (")
 		strings.write_f32(&fps_str, frame_draw_time * 1000, 'f')
 		strings.write_string(&fps_str, " ms)")
-		k2.draw_text(strings.to_string(fps_str), {50, 150}, 30, k2.DARK_BLUE)
+		k2.draw_text(strings.to_string(fps_str), {debug_info_x, debug_info_y + margin_y + line_hieght}, 30, k2.DARK_BLUE)
 
 		// Draw Screen Dimensions and camera zoom
 		debug_str := strings.builder_make(context.temp_allocator)
@@ -391,11 +402,11 @@ step :: proc() -> bool {
 		strings.write_string(&debug_str, ", zoom: ")
 		strings.write_f32(&debug_str, zoom_level, 'f')
 		strings.write_string(&debug_str, ")")
-		k2.draw_text(strings.to_string(debug_str), {50, 200}, 30, k2.DARK_BLUE)
+		k2.draw_text(strings.to_string(debug_str), {debug_info_x, debug_info_y + margin_y + 2 * line_hieght}, 30, k2.DARK_BLUE)
 
 		// Draw command history
-		command_history_y_offset : f32 = 250.0
-		k2.draw_text("Command History:", {50, command_history_y_offset}, 20, k2.DARK_BLUE)
+		command_history_y_offset : f32 = debug_info_y + margin_y + 3 * line_hieght
+		k2.draw_text("Command History:", {debug_info_x, command_history_y_offset}, 20, k2.DARK_BLUE)
 		count := 0
 		draw_offset: f32 = 0.0
 		len := xar.len(player_cmd_history)
@@ -412,21 +423,21 @@ step :: proc() -> bool {
 			strings.write_string(&fps_str, "* ")
 			switch cmd {
 				case .MoveLeft:
-					k2.draw_text("* MoveLeft", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+					k2.draw_text("* MoveLeft", {debug_info_x, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 				case .MoveRight:
-					k2.draw_text("* MoveRight", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+					k2.draw_text("* MoveRight", {debug_info_x, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 				case .MoveUp:
-					k2.draw_text("* MoveUp", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+					k2.draw_text("* MoveUp", {debug_info_x, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 				case .MoveDown:
-					k2.draw_text("* MoveDown", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+					k2.draw_text("* MoveDown", {debug_info_x, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 				case .MoveUpLeft:
-					k2.draw_text("* MoveUpLeft", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+					k2.draw_text("* MoveUpLeft", {debug_info_x, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 				case .MoveUpRight:
-					k2.draw_text("* MoveUpRight", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+					k2.draw_text("* MoveUpRight", {debug_info_x, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 				case .MoveDownLeft:
-					k2.draw_text("* MoveDownLeft", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+					k2.draw_text("* MoveDownLeft", {debug_info_x, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 				case .MoveDownRight:
-					k2.draw_text("* MoveDownRight", {50, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
+					k2.draw_text("* MoveDownRight", {debug_info_x, command_history_y_offset + draw_offset}, 20, k2.DARK_BLUE)
 			}
 		}
 	} else {
@@ -440,6 +451,13 @@ step :: proc() -> bool {
 	// Draw obstacles
 	k2.draw_rect({10, 10, 60, 60}, k2.GREEN)
 	k2.draw_rect({20, 20, 40, 40}, k2.LIGHT_GREEN)
+
+
+	// Draw UI on top
+
+	// Draw title in center of screen
+	k2.draw_text(TITLE, {screen_origin_x + 20, screen_origin_y + 20}, TITLE_FONT_SIZE, k2.DARK_BLUE)
+
 
 	k2.present()
 
