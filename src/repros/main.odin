@@ -1,7 +1,7 @@
 // See https://github.com/karl-zylinski/karl2d/pull/169
 package reproducer
 
-import k2 "../odyn_deps/karl2d"
+import k2 "../deps/karl2d"
 
 import "core:fmt"
 import "core:math"

@@ -1,5 +1,5 @@
 {
     "collections": [
-        { "name": "shared", "path": "src/odyn_deps" }
+        { "name": "shared", "path": "src/deps" }
     ]
 }

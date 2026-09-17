@@ -3,8 +3,8 @@ package traversal
 // Third-party dependencies
 import k2 "shared:karl2d"
 import "shared:tracker" // tracker imports "shared/afmt"
-// Note: The "shared:" syntax requires registering odyn_deps as the "shared" collection with -collection:shared=odyn_deps. tracker requires this in order to import afmt.
-// Could also do "odyn_deps/karl2d"
+// Note: The "shared:" syntax requires registering deps as the "shared" collection with -collection:shared=deps. tracker requires this in order to import afmt.
+// Could also do "deps/karl2d"
 
 import "core:fmt"
 import "core:math/linalg"

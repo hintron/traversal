@@ -58,8 +58,8 @@ if [ "$RUN" == "true" ]; then
     ODIN_CMD="odin run"
 fi
 
-echo "$ODIN_CMD . -collection:shared=odyn_deps -out:$TRAVERSAL_BIN $DEBUG_FLAG $MEM_LEAK_FLAG $SHUTDOWN_SECS $FANCY_TRACKER"
-$ODIN_CMD . -collection:shared=odyn_deps -out:"$TRAVERSAL_BIN" $DEBUG_FLAG $MEM_LEAK_FLAG $SHUTDOWN_SECS $FANCY_TRACKER
+echo "$ODIN_CMD . -collection:shared=deps -out:$TRAVERSAL_BIN $DEBUG_FLAG $MEM_LEAK_FLAG $SHUTDOWN_SECS $FANCY_TRACKER"
+$ODIN_CMD . -collection:shared=deps -out:"$TRAVERSAL_BIN" $DEBUG_FLAG $MEM_LEAK_FLAG $SHUTDOWN_SECS $FANCY_TRACKER
 if [ $? -ne 0 ]; then
     echo "Build failed"
     exit 1
@@ -67,8 +67,8 @@ fi
 
 # Only build for web if NOT doing --run
 if [ "$RUN" == "" ]; then
-    echo "odin run odyn_deps/karl2d/build_web -- . -collection:shared=odyn_deps -o:size $DEBUG_FLAG $MEM_LEAK_FLAG $SHUTDOWN_SECS"
-    odin run odyn_deps/karl2d/build_web -- . -collection:shared=odyn_deps -o:size $DEBUG_FLAG $MEM_LEAK_FLAG $SHUTDOWN_SECS $FANCY_TRACKER
+    echo "odin run deps/karl2d/build_web -- . -collection:shared=deps -o:size $DEBUG_FLAG $MEM_LEAK_FLAG $SHUTDOWN_SECS"
+    odin run deps/karl2d/build_web -- . -collection:shared=deps -o:size $DEBUG_FLAG $MEM_LEAK_FLAG $SHUTDOWN_SECS $FANCY_TRACKER
     if [ $? -ne 0 ]; then
         echo "Web build failed"
         exit 1

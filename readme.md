@@ -46,18 +46,18 @@ To build for both native and web, do:
 
 Or invoke the Odin compiler directly:
 ```
-odin run . -collection:shared=odyn_deps
+odin run . -collection:shared=deps
 ```
 
 > [!NOTE]
-> The `-collection` arg is required to get the `tracker` package to properly import the `afmt` package from `odyn_deps/` (for now).
+> The `-collection` arg is required to get the `tracker` package to properly import the `afmt` package from `deps/` (for now).
 
 
 To manually do a web build and start up an http server, do:
 
 ```
 cd src
-odin run odyn_deps/karl2d/build_web -- . -collection:shared=odyn_deps -o:size
+odin run deps/karl2d/build_web -- . -collection:shared=deps -o:size
 cd bin/web
 python -m http.server
 ```
