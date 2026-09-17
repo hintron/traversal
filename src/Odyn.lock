@@ -13,5 +13,5 @@ commit = "3beb8b269073fe293f003cde4219b33721e1cba6"
 
 [[dep]]
 name = "karl2d"
-source = "https://github.com/hintron/karl2d"
-commit = "7ad548fa69b871949b5e660b339ff8d0da18e31d"
+source = "https://github.com/karl-zylinski/karl2d"
+commit = "2bcec16b52575cf62e4a318ab0455edc3aec8f43"
